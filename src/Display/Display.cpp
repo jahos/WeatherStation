@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 
+
 Display::Display() : sp(&SPI1_class::getInstance())
 {
 	/*setting of chip select for display*/
@@ -176,5 +177,258 @@ void Display::drawFrame(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint
 	sp->storeCommand((fillColor << 2) & 0x3F);//B
 
 	sp->send();
+}
+
+void Display::copyWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint16_t x2, uint16_t y2)
+{
+    sp->storeCommand(CMD_COPY_WINDOW);//copy window
+    sp->storeCommand(x0);//start column
+    sp->storeCommand(y0);//start row
+    sp->storeCommand(x1);//end column
+    sp->storeCommand(y1);//end row
+    sp->storeCommand(x2);//new column
+    sp->storeCommand(y2);//new row
+
+    sp->send();
+}
+
+void Display::dimWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+   sp->storeCommand(CMD_DIM_WINDOW);//copy area
+   sp->storeCommand(x0);//start column
+   sp->storeCommand(y0);//start row
+   sp->storeCommand(x1);//end column
+   sp->storeCommand(y1);//end row
+
+   sp->send();
+}
+
+void Display::clearWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+   sp->storeCommand(CMD_CLEAR_WINDOW);//clear window
+   sp->storeCommand(x0);//start column
+   sp->storeCommand(y0);//start row
+   sp->storeCommand(x1);//end column
+   sp->storeCommand(y1);//end row
+
+   sp->send();
+}
+
+void Display::setScolling(ScollingDirection direction, uint8_t rowAddr, uint8_t rowNum, uint8_t timeInterval)
+{
+    uint8_t scolling_horizontal = 0x0;
+    uint8_t scolling_vertical = 0x0;
+    switch(direction){
+        case Horizontal:
+            scolling_horizontal = 0x01;
+            scolling_vertical = 0x00;
+            break;
+        case Vertical:
+            scolling_horizontal = 0x00;
+            scolling_vertical = 0x01;
+            break;
+        case Diagonal:
+            scolling_horizontal = 0x01;
+            scolling_vertical = 0x01;
+            break;
+        default:
+            break;
+    }
+   sp->storeCommand(CMD_CONTINUOUS_SCROLLING_SETUP);
+   sp->storeCommand(scolling_horizontal);
+   sp->storeCommand(rowAddr);
+   sp->storeCommand(rowNum);
+   sp->storeCommand(scolling_vertical);
+   sp->storeCommand(timeInterval);
+   sp->storeCommand(CMD_ACTIVE_SCROLLING);
+
+   sp->send();
+}
+
+void Display::enableScolling(bool enable)
+{
+    if(enable)
+       sp->storeCommand(CMD_ACTIVE_SCROLLING);
+    else
+       sp->storeCommand(CMD_DEACTIVE_SCROLLING);
+
+    sp->send();
+}
+
+void Display::setDisplayMode(DisplayMode mode)
+{
+   sp->storeCommand(mode);
+   sp->send();
+}
+
+void Display::setDisplayPower(DisplayPower power)
+{
+   sp->storeCommand(power);
+   sp->send();
+}
+
+void Display::draw_bitmap(uint8_t chXpos, uint8_t chYpos, const uint8_t *pchBmp, uint8_t chWidth, uint8_t chHeight, uint16_t hwColor)
+{
+	uint16_t i, j, byteWidth = (chWidth + 7) / 8;
+
+    for(j = 0; j < chHeight; j ++){
+        for(i = 0; i < chWidth; i ++ ) {
+            if(*(pchBmp + j * byteWidth + i / 8) & (128 >> (i & 7))) {
+                drawPixel(chXpos + i, chYpos + j, hwColor);
+            }
+        }
+    }
+}
+
+void Display::draw_3216char(uint8_t chXpos, uint8_t chYpos, uint8_t chChar, uint16_t hwColor)
+{
+	uint8_t i, j;
+	uint8_t chTemp = 0, chYpos0 = chYpos;
+
+	for (i = 0; i < 64; i ++) {
+		chTemp = c_chFont3216[chChar - 0x30][i];
+		for (j = 0; j < 8; j ++) {
+			if (chTemp & 0x80) {
+				drawPixel(chXpos, chYpos, hwColor);
+    		}
+			chTemp <<= 1;
+			chYpos ++;
+			if ((chYpos - chYpos0) == 32) {
+				chYpos = chYpos0;
+				chXpos ++;
+				break;
+			}
+		}
+	}
+}
+
+void Display::draw_1616char(uint8_t chXpos, uint8_t chYpos, uint8_t chChar, uint16_t hwColor)
+{
+	uint8_t i, j;
+	uint8_t chTemp = 0, chYpos0 = chYpos;
+
+	for (i = 0; i < 32; i ++) {
+		chTemp = c_chFont1612[chChar - 0x30][i];
+		for (j = 0; j < 8; j ++) {
+			if (chTemp & 0x80) {
+				drawPixel(chXpos, chYpos, hwColor);
+    		}
+			chTemp <<= 1;
+			chYpos ++;
+			if ((chYpos - chYpos0) == 16) {
+				chYpos = chYpos0;
+				chXpos ++;
+				break;
+			}
+		}
+	}
+}
+
+void Display::display_char(uint8_t chXpos, uint8_t chYpos, char chChr, uint8_t chSize, uint16_t hwColor)
+{
+	uint8_t i, j, chTemp = 0;
+	uint8_t chYpos0 = chYpos;
+
+	if (chXpos >= RGB_OLED_WIDTH || chYpos >= RGB_OLED_HEIGHT) {
+		return;
+	}
+
+    for (i = 0; i < chSize; i ++) {
+		if (FONT_1206 == chSize) {
+			chTemp = c_chFont1206[(uint8_t)chChr - 0x20][i];
+		} else if (FONT_1608 == chSize) {
+			chTemp = c_chFont1608[(uint8_t)chChr - 0x20][i];
+		}
+
+        for (j = 0; j < 8; j ++) {
+    		if (chTemp & 0x80) {
+				drawPixel(chXpos, chYpos, hwColor);
+    		}
+			chTemp <<= 1;
+			chYpos ++;
+			if ((chYpos - chYpos0) == chSize) {
+				chYpos = chYpos0;
+				chXpos ++;
+				break;
+			}
+		}
+    }
+}
+
+void Display::display_string(uint8_t chXpos, uint8_t chYpos, const char *pchString, uint8_t chSize, uint16_t hwColor)
+{
+	if (chXpos >= RGB_OLED_WIDTH || chYpos >= RGB_OLED_HEIGHT) {
+		return;
+	}
+
+    while (*pchString != '\0') {
+        if (chXpos > (RGB_OLED_WIDTH - chSize / 2)) {
+			chXpos = 0;
+			chYpos += chSize;
+			if (chYpos > (RGB_OLED_HEIGHT - chSize)) {
+				chYpos = chXpos = 0;
+//				clearWindow(0,0,0,0);
+			}
+		}
+
+        display_char(chXpos, chYpos, *pchString, chSize, hwColor);
+        chXpos += chSize / 2;
+        pchString ++;
+    }
+}
+
+static uint32_t _pow(uint8_t m, uint8_t n)
+{
+	uint32_t result = 1;
+
+	while(n --) result *= m;
+	return result;
+}
+
+void Display::display_num(uint8_t chXpos, uint8_t chYpos, uint32_t chNum, uint8_t chLen, uint8_t chSize, uint16_t hwColor)
+{
+	uint8_t i;
+	uint8_t chTemp, chShow = 0;
+
+	if (chXpos >= RGB_OLED_WIDTH || chYpos >= RGB_OLED_HEIGHT) {
+		return;
+	}
+
+	for(i = 0; i < chLen; i ++) {
+		chTemp = (chNum / _pow(10, chLen - i - 1)) % 10;
+		if(chShow == 0 && i < (chLen - 1)) {
+			if(chTemp == 0) {
+				display_char(chXpos + (chSize / 2) * i, chYpos, ' ', chSize, hwColor);
+				continue;
+			} else {
+				chShow = 1;
+			}
+		}
+	 	display_char(chXpos + (chSize / 2) * i, chYpos, chTemp + '0', chSize, hwColor);
+	}
+}
+
+
+void Display::draw_circle(uint8_t chXpos, uint8_t chYpos, uint8_t chRadius, uint16_t hwColor)
+{
+	int x = -chRadius, y = 0, err = 2 - 2 * chRadius, e2;
+
+	if (chXpos >= RGB_OLED_WIDTH || chYpos >= RGB_OLED_HEIGHT) {
+		return;
+	}
+
+    do {
+        drawPixel(chXpos - x, chYpos + y, hwColor);
+        drawPixel(chXpos + x, chYpos + y, hwColor);
+        drawPixel(chXpos + x, chYpos - y, hwColor);
+        drawPixel(chXpos - x, chYpos - y, hwColor);
+        e2 = err;
+        if (e2 <= y) {
+            err += ++ y * 2 + 1;
+            if(-x == y && e2 <= x) e2 = 0;
+        }
+        if(e2 > x) err += ++ x * 2 + 1;
+    } while(x <= 0);
+
 }
 

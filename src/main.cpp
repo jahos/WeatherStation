@@ -85,12 +85,7 @@ int main(void)
 	init();
 	printf("Witaj !\n\r");
 	ds.setBackground(BLACK);
-	ds.drawPixel(10,10,GREEN);
-	ds.drawPixel(20,10,YELLOW);
-	ds.drawPixel(30,10,RED);
-	ds.drawPixel(40,10,BLUE);
-	ds.drawLine(41,11,95,63,RED);
-	ds.drawFrame(10,11,20,63,BLUE,YELLOW);
+	ds.display_string(10,10,"Witaj!",FONT_1206,RED);
 //	ds.setBackground(BLUE);
 	while (1)
 	{

@@ -9,6 +9,7 @@
 #define DISPLAY_DISPLAY_H_
 
 #include "Core/SPI1class.h"
+#include "Fonts.h"
 
 #define RGB_OLED_WIDTH                      96
 #define RGB_OLED_HEIGHT                     64
@@ -113,10 +114,24 @@ public:
 	void drawPixel(uint16_t x, uint16_t y, uint16_t color);
 	void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 	void drawFrame(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t outColor, uint16_t fillColor);
+	void copyWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint16_t x2, uint16_t y2);
+	void dimWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+	void clearWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+	void setScolling(ScollingDirection direction, uint8_t rowAddr, uint8_t rowNum, uint8_t timeInterval);
+	void draw_bitmap(uint8_t chXpos, uint8_t chYpos, const uint8_t *pchBmp, uint8_t chWidth, uint8_t chHeight, uint16_t hwColor);
+	void draw_3216char(uint8_t chXpos, uint8_t chYpos, uint8_t chChar, uint16_t hwColor);
+	void draw_1616char(uint8_t chXpos, uint8_t chYpos, uint8_t chChar, uint16_t hwColor);
+	void display_string(uint8_t chXpos, uint8_t chYpos, const char *pchString, uint8_t chSize, uint16_t hwColor);
+	void display_num(uint8_t chXpos, uint8_t chYpos, uint32_t chNum, uint8_t chLen, uint8_t chSize, uint16_t hwColor);
+	void draw_circle(uint8_t chXpos, uint8_t chYpos, uint8_t chRadius, uint16_t hwColor);
+	void draw_rect(uint8_t chXpos, uint8_t chYpos, uint8_t chWidth, uint8_t chHeight, uint16_t hwColor);
+	void enableScolling(bool enable);
+	void setDisplayMode(DisplayMode mode);
+	void setDisplayPower(DisplayPower power);
 	virtual ~Display();
 
 private:
-
+    void display_char(uint8_t chXpos, uint8_t chYpos, char chChr, uint8_t chSize, uint16_t hwColor);
 };
 
 #endif /* DISPLAY_DISPLAY_H_ */
