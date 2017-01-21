@@ -111,6 +111,8 @@ public:
 	void clear();
 	void setBackground(uint16_t color);
 	void drawPixel(uint16_t x, uint16_t y, uint16_t color);
+	void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
+	void drawFrame(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t outColor, uint16_t fillColor);
 	virtual ~Display();
 
 private:

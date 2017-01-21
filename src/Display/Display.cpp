@@ -110,22 +110,70 @@ void Display::drawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
 	if ((x < 0) || (x >= RGB_OLED_WIDTH) || (y < 0) || (y >= RGB_OLED_HEIGHT))
 	return;
-	printf("outBuff.size(%d)\n\r",sp->m_outBuffer.size());
-	while(sp->isBusy());
+
 	//set column point
 	sp->storeCommand(CMD_SET_COLUMN_ADDRESS);
 	sp->storeCommand(x);
 	sp->storeCommand(RGB_OLED_WIDTH-1);
 	//set row point
-	sp->storeCommand(CMD_SET_ROW_ADDRESS,DATA);
+	sp->storeCommand(CMD_SET_ROW_ADDRESS);
 	sp->storeCommand(y);
 	sp->storeCommand(RGB_OLED_HEIGHT-1);
 
 	//fill 16bit colour
-	sp->storeCommand(color >> 8, DATA);
-	sp->storeCommand(color, DATA);
+	sp->storeCommand((color >> 8), DATA);
+	sp->storeCommand((color & 0xFF), DATA);
 
-	printf("outBuff.size(%d)\n\r",sp->m_outBuffer.size());
+	sp->send();
+}
+
+void Display::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+	if((x0 < 0) || (y0 < 0) || (x1 < 0) || (y1 < 0))
+		return;
+
+	if (x0 >= RGB_OLED_WIDTH)  x0 = RGB_OLED_WIDTH - 1;
+	if (y0 >= RGB_OLED_HEIGHT) y0 = RGB_OLED_HEIGHT - 1;
+	if (x1 >= RGB_OLED_WIDTH)  x1 = RGB_OLED_WIDTH - 1;
+	if (y1 >= RGB_OLED_HEIGHT) y1 = RGB_OLED_HEIGHT - 1;
+
+	sp->storeCommand(CMD_DRAW_LINE);//draw line
+	sp->storeCommand(x0);//start column
+	sp->storeCommand(y0);//start row
+	sp->storeCommand(x1);//end column
+	sp->storeCommand(y1);//end row
+	sp->storeCommand((color >> 9) & 0x3F);//R
+	sp->storeCommand((color >> 4) & 0x3F);//G
+	sp->storeCommand((color << 2) & 0x3F);//B
+
+	sp->send();
+}
+
+void Display::drawFrame(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t outColor, uint16_t fillColor)
+{
+	if((x0 < 0) || (y0 < 0) || (x1 < 0) || (y1 < 0))
+		return;
+
+	if (x0 >= RGB_OLED_WIDTH)  x0 = RGB_OLED_WIDTH - 1;
+	if (y0 >= RGB_OLED_HEIGHT) y0 = RGB_OLED_HEIGHT - 1;
+	if (x1 >= RGB_OLED_WIDTH)  x1 = RGB_OLED_WIDTH - 1;
+	if (y1 >= RGB_OLED_HEIGHT) y1 = RGB_OLED_HEIGHT - 1;
+
+	sp->storeCommand(CMD_FILL_WINDOW);//fill window
+	sp->storeCommand(ENABLE_FILL);
+	sp->storeCommand(CMD_DRAW_RECTANGLE);//draw rectangle
+	sp->storeCommand(x0);//start column
+	sp->storeCommand(y0);//start row
+	sp->storeCommand(x1);//end column
+	sp->storeCommand(y1);//end row
+
+	sp->storeCommand((outColor >> 9) & 0x3F);//R
+	sp->storeCommand((outColor >> 4) & 0x3F);//G
+	sp->storeCommand((outColor << 2) & 0x3F);//B
+
+	sp->storeCommand((fillColor >> 9) & 0x3F);//R
+	sp->storeCommand((fillColor >> 4) & 0x3F);//G
+	sp->storeCommand((fillColor << 2) & 0x3F);//B
 
 	sp->send();
 }

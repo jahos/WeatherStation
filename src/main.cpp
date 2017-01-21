@@ -69,8 +69,8 @@ void pomiar()
 	{
 		humSens.getMeasurements();
 
-		printf("temperatura[%i.%i *C]\n\r",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
-		printf("Wilgotnosc[%i.%i %c]\n\r",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
+//		printf("temperatura[%i.%i *C]\n\r",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
+//		printf("Wilgotnosc[%i.%i %c]\n\r",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
 		i=0;
 	}
 	++i;
@@ -84,9 +84,14 @@ int main(void)
 	wsk2 = pomiar;
 	init();
 	printf("Witaj !\n\r");
-//	ds.setBackground(BLACK);
-//	ds.drawPixel(10,10,RGB_MACRO(255,0,0));
-	ds.setBackground(BLUE);
+	ds.setBackground(BLACK);
+	ds.drawPixel(10,10,GREEN);
+	ds.drawPixel(20,10,YELLOW);
+	ds.drawPixel(30,10,RED);
+	ds.drawPixel(40,10,BLUE);
+	ds.drawLine(41,11,95,63,RED);
+	ds.drawFrame(10,11,20,63,BLUE,YELLOW);
+//	ds.setBackground(BLUE);
 	while (1)
 	{
 
