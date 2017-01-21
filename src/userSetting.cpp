@@ -14,7 +14,7 @@ void init()
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 	initUsart();
 	initSPI();
-	SysTick_Config(8000000);
+	SysTick_Config(12000000);
 }
 
 void initUsart()

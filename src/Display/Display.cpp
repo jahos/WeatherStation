@@ -122,8 +122,8 @@ void Display::drawPixel(uint16_t x, uint16_t y, uint16_t color)
 	sp->storeCommand(RGB_OLED_HEIGHT-1);
 
 	//fill 16bit colour
-	sp->storeCommand((color >> 8), DATA);
-	sp->storeCommand((color & 0xFF), DATA);
+	sp->storeCommand((uint8_t)(color >> 8), DATA);
+	sp->storeCommand((uint8_t)(color), DATA);
 
 	sp->send();
 }

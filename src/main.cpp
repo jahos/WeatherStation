@@ -56,6 +56,7 @@ T abs(T var)
 }
 
 Display ds;
+char buf[20];
 
 void pomiar()
 {
@@ -64,13 +65,15 @@ void pomiar()
 	if(i%2)
 	{
 		humSens.measureRequest();
+		ds.clear();
+		sprintf(buf,"[%i.%i *C]",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
+		ds.display_string(5,5,buf,FONT_1206,GREEN);
+		sprintf(buf,"[%i.%i %c]",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
+		ds.display_string(5,20,buf,FONT_1206,GREEN);
 	}
 	else
 	{
 		humSens.getMeasurements();
-
-//		printf("temperatura[%i.%i *C]\n\r",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
-//		printf("Wilgotnosc[%i.%i %c]\n\r",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
 		i=0;
 	}
 	++i;
@@ -85,8 +88,6 @@ int main(void)
 	init();
 	printf("Witaj !\n\r");
 	ds.setBackground(BLACK);
-	ds.display_string(10,10,"Witaj!",FONT_1206,RED);
-//	ds.setBackground(BLUE);
 	while (1)
 	{
 

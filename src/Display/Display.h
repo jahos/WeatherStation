@@ -55,7 +55,7 @@
 #define CMD_ENABLE_LINEAR_GRAY_SCALE_TABLE  0xB9
 #define CMD_SET_PRECHARGE_VOLTAGE           0xBB
 #define CMD_SET_V_VOLTAGE                   0xBE
-#define COLOR_R(X) (((X/255)*63) << 10)
+#define COLOR_R(X) ((((X/255)*63) << 11) & 0xFFFF)
 #define COLOR_G(X) (((X/255)*63) << 5 )
 #define COLOR_B(X) (((X/255)*63) >> 1 )
 
