@@ -31,8 +31,12 @@
 #define SPI2_MOSI_PIN	 	GPIO_Pin_15
 #define SPI2_MISO_PIN 		GPIO_Pin_14
 
+#define ADC_CHANNELS 4
+extern volatile uint16_t ADCVal[4];
+
 void init();
 void initUsart();
 void initSPI();
+void initADC();
 
 #endif /* USERSETTINGS_H_ */

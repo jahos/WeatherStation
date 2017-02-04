@@ -35,6 +35,7 @@ SOFTWARE.
 #include "userSettings.h"
 #include "Sensors/HIH6030.h"
 #include "Display/Display.h"
+#include "math.h"
 
 /* Private macro */
 /* Private variables */
@@ -57,24 +58,72 @@ T abs(T var)
 
 Display ds;
 char buf[20];
-
+extern volatile uint16_t ADCVal[4];
+static float V1;
+static float V2;
+static float V3;
+static int V3_d;
+static int V3_m;
+static int V2_d;
+static int V2_m;
+static int V1_d;
+static int V1_m;
 void pomiar()
 {
 	static HIH6030 humSens;
 	static int i = 0;
-	if(i%2)
+	switch(i)
+	{
+	case 0: //NO2
 	{
 		humSens.measureRequest();
-		ds.clear();
+		V1 = (float)ADCVal[0]*0.0008056640625;
+		V1 = (3.3-V1)/V1;
+		V1_d = V1*100;
+		break;
+	}
+	case 1://NO3
+	{
+		V2 = (float)ADCVal[1]*0.0008056640625;
+		V2 = (3.3-V2)/V2;
+		V2_d = V2*100;
+		ds.clearWindow(5,5,70,20);
 		sprintf(buf,"[%i.%i *C]",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
 		ds.display_string(5,5,buf,FONT_1206,GREEN);
+		break;
+	}
+	case 2://CO
+	{
+		V3 = (float)ADCVal[2]*0.0008056640625;
+		V3 = (3.3-V3)/V3;
+
+		V3_d = V3*100;
+		ds.clearWindow(5,20,70,34);
 		sprintf(buf,"[%i.%i %c]",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
 		ds.display_string(5,20,buf,FONT_1206,GREEN);
+		break;
 	}
-	else
+	case 3:
+	{
+		ds.clearWindow(5,35,96,48);
+		sprintf(buf,"%i %i %i",V1_d,V2_d,V3_d);
+		ds.display_string(5,35,buf,FONT_1206,GREEN);
+		break;
+	}
+	case 4:
+	{
+		float temp = (float)ADCVal[3]*0.8056640625;
+		ds.clearWindow(5,48,96,63);
+		sprintf(buf,"%i.%i *C",(int)temp/100,(int)temp%100);
+		ds.display_string(5,48,buf,FONT_1206,GREEN);
+		break;
+	}
+	default:
 	{
 		humSens.getMeasurements();
 		i=0;
+		break;
+	}
 	}
 	++i;
 }
