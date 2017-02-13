@@ -9,7 +9,20 @@
 #include "userSettings.h"
 #include <stdio.h>
 
-
+extern const uint16_t colorScale[32] =
+{
+		RGB_MACRO( 0, 0, 255)	,RGB_MACRO( 0, 16, 240)	,RGB_MACRO( 0, 32, 224),
+		RGB_MACRO( 0, 48, 208)	,RGB_MACRO( 0, 64, 192)	,RGB_MACRO( 0, 80, 176),
+		RGB_MACRO( 0, 96, 160)	,RGB_MACRO( 0, 112, 144),RGB_MACRO( 0, 128, 128),
+		RGB_MACRO( 0, 144, 112)	,RGB_MACRO( 0, 160, 96)	,RGB_MACRO( 0, 176, 80),
+		RGB_MACRO( 0, 192, 64)	,RGB_MACRO( 0, 208, 48)	,RGB_MACRO( 0, 224, 32),
+		RGB_MACRO( 0, 240, 16)	,RGB_MACRO( 0, 255, 0)	,RGB_MACRO( 16, 240, 0),
+		RGB_MACRO( 32, 224, 0)	,RGB_MACRO( 48, 208, 0)	,RGB_MACRO( 64, 192, 0),
+		RGB_MACRO( 80, 176, 0)	,RGB_MACRO( 96, 160, 0)	,RGB_MACRO( 112, 144, 0),
+		RGB_MACRO( 128, 128, 0)	,RGB_MACRO( 144, 112, 0),RGB_MACRO( 160, 96, 0),
+		RGB_MACRO( 176, 80, 0)	,RGB_MACRO( 192, 64, 0)	,RGB_MACRO( 208, 48, 0),
+		RGB_MACRO( 224, 32, 0)	,RGB_MACRO( 255, 0, 0)
+};
 
 Display::Display() : sp(&SPI1_class::getInstance())
 {
@@ -96,14 +109,14 @@ void Display::setBackground(uint16_t color)
 	sp->storeCommand(63);//end row
 
 	//frame
-	sp->storeCommand((color >> 9) & 0x3F);//R
-	sp->storeCommand((color >> 4) & 0x3F);//G
-	sp->storeCommand((color << 2) & 0x3F);//B
+	sp->storeCommand((color >> 10) & 0x3F);//R
+	sp->storeCommand((color >> 5) & 0x3F);//G
+	sp->storeCommand((color) & 0x3F);//B
 
 	//fill
-	sp->storeCommand((color >> 9) & 0x3F);//R
-	sp->storeCommand((color >> 4) & 0x3F);//G
-	sp->storeCommand((color << 2) & 0x3F);//B
+	sp->storeCommand((color >> 10) & 0x3F);//R
+	sp->storeCommand((color >> 5) & 0x3F);//G
+	sp->storeCommand((color ) & 0x3F);//B
 	sp->send();
 }
 

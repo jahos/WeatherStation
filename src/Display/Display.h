@@ -59,7 +59,8 @@
 #define COLOR_G(X) (((X/255)*63) << 5 )
 #define COLOR_B(X) (((X/255)*63) >> 1 )
 
-#define RGB_MACRO(X,Y,Z) (COLOR_R(X) | COLOR_G(Y) | COLOR_B(Z))
+//#define RGB_MACRO(X,Y,Z) (COLOR_R(X) | COLOR_G(Y) | COLOR_B(Z))
+#define RGB_MACRO(R,G, B) (((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))
 
 enum Color{
     BLACK     = RGB_MACRO(  0,  0,  0), // black
@@ -75,6 +76,8 @@ enum Color{
     GREEN     = RGB_MACRO(  0,255,  0), // green
     PURPLE    = RGB_MACRO(160, 32,240), // purple
 };
+
+extern const uint16_t colorScale[32];
 
 enum DisplayMode{
     //reset the above effect and turn the data to ON at the corresponding gray level.
