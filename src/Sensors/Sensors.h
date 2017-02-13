@@ -11,6 +11,12 @@
 #include <queue>
 #include <Core/Spi.h>
 
+struct MeasureData
+{
+	uint16_t color;
+	char * data;
+};
+
 class Sensors
 {
 private:

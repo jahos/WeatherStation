@@ -11,6 +11,12 @@ environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.456903913/C
 environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.456903913/C_INCLUDE_PATH/operation=remove
 environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.456903913/append=true
 environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.456903913/appendContributed=true
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/CPATH/delimiter=;
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/CPATH/operation=remove
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/C_INCLUDE_PATH/delimiter=;
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/C_INCLUDE_PATH/operation=remove
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/append=true
+environment/buildEnvironmentInclude/com.atollic.truestudio.exe.debug.777193730/appendContributed=true
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.1578247966/LIBRARY_PATH/delimiter=;
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.1578247966/LIBRARY_PATH/operation=remove
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.1578247966/append=true
@@ -19,3 +25,7 @@ environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.456903913/L
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.456903913/LIBRARY_PATH/operation=remove
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.456903913/append=true
 environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.456903913/appendContributed=true
+environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.777193730/LIBRARY_PATH/delimiter=;
+environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.777193730/LIBRARY_PATH/operation=remove
+environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.777193730/append=true
+environment/buildEnvironmentLibrary/com.atollic.truestudio.exe.debug.777193730/appendContributed=true

@@ -50,11 +50,6 @@ SOFTWARE.
 **
 **===========================================================================
 */
-template <typename T>
-T abs(T var)
-{
-	return ((var > 0)? var : (-1 * var));
-}
 
 Display ds;
 char buf[20];
@@ -117,15 +112,22 @@ void pomiar()
 	}
 	default:
 	{
-		humSens.getMeasurements();
+
 		i=0;
 		break;
 	}
 	}
-	printf("Color=[%d]\n\r",cl);
-	ds.clearWindow(5,5,70,20);
-	sprintf(buf,"[%i.%i *C]",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
-	ds.display_string(5,5,buf,FONT_1206,colorScale[cl]);
+	humSens.getMeasurements();
+	ds.clearWindow(0,0,70,24);
+	MeasureData* hum = humSens.getHumidity();
+	MeasureData* temp = humSens.getTemperature();
+	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
+	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
+	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
+	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
+	char buf[4];
+	sprintf(buf,"%i",-6);
+	ds.display_string(0,24,buf,FONT_1206,colorScale[temp->color]);
 //	ds.setBackground(colorScale[cl]);
 	cl+=1;
 	if(cl >32)

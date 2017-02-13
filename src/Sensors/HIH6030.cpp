@@ -7,12 +7,19 @@
 
 #include <Sensors/HIH6030.h>
 #include <stdio.h>
+#include <string.h>
 
 HIH6030::HIH6030():
 	 m_temperature(0)
 	,m_humidity(0)
 	,m_sp(&SPI2_class::getInstance())
 {
+	memset(m_hum,'\0',10);
+	memset(m_temp,'\0',10);
+	temp.color = 30;
+	temp.data = &m_temp[0];
+	hum.color = 20;
+	hum.data = &m_hum[0];
 	m_csSetting.gpioType = GPIOB;
 	m_csSetting.csPin = GPIO_Pin_12;
 	m_sp->setBuffers(&m_inBuf,&m_outBuf);
@@ -24,14 +31,14 @@ HIH6030::~HIH6030()
 
 }
 
-int HIH6030::getTemperature()
+MeasureData* HIH6030::getTemperature()
 {
-	return (m_temperature * 100);
+	return &temp;
 }
 
-int HIH6030::getHumidity()
+MeasureData* HIH6030::getHumidity()
 {
-	return (m_humidity * 100);
+	return &hum;
 }
 
 void HIH6030::measureRequest()
@@ -42,6 +49,55 @@ void HIH6030::measureRequest()
 		m_sp->send();
 	}
 	m_inBuf.pop();
+}
+
+void HIH6030::updatedColors()
+{
+	if(m_humidity > 60)
+	{
+		hum.color = 16;
+	}
+	else
+	{
+		hum.color = 32 - ((int)m_humidity >> 2);
+	}
+
+	if(m_temperature < 0)
+	{
+		temp.color = 0;
+	}
+	else if(m_temperature > 30)
+	{
+		temp.color = 32;
+	}
+	else
+	{
+		temp.color = (int)m_temperature + 1;
+	}
+}
+
+void HIH6030::updateBuffers()
+{
+	//floating points
+	int temp_m =(int)(abs(m_temperature*100))%100;
+	int hum_m = (int)(m_humidity*100)%100;
+
+	if(temp_m < 10)
+	{
+		sprintf(m_temp,"%i.0%i",(int)m_temperature,temp_m);
+	}
+	else
+	{
+		sprintf(m_temp,"%i.%i",(int)m_temperature,temp_m);
+	}
+	if(hum_m < 10)
+	{
+		sprintf(m_hum,"%i.0%i",(int)m_humidity,hum_m);
+	}
+	else
+	{
+		sprintf(m_hum,"%i.%i",(int)m_humidity,hum_m);
+	}
 }
 
 void HIH6030::getMeasurements()
@@ -71,5 +127,8 @@ void HIH6030::getMeasurements()
 
 	m_humidity 	= (((float)h * 100) / 16382);
 	m_temperature = (((float)t * 165) / 16382)-40;
+
+	updatedColors();
+	updateBuffers();
 }
 
