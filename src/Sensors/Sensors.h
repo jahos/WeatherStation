@@ -11,6 +11,12 @@
 #include <queue>
 #include <Core/Spi.h>
 
+template <typename T>
+T abs(T var)
+{
+	return ((var > 0)? var : (-1 * var));
+}
+
 struct MeasureData
 {
 	uint16_t color;

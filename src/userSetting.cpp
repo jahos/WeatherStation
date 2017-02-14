@@ -10,6 +10,7 @@
 #include "stm32f10x_dma.h"
 #include "stm32f10x_adc.h"
 #include "userSettings.h"
+#include "Sensors/MiCS6814.h"
 #define CLK_FREQ 24000000
 
 volatile uint16_t ADCVal[4];
@@ -21,7 +22,7 @@ void init()
 	initSPI();
 	initADC();
 
-	SysTick_Config(12000000);
+	SysTick_Config(13000000);
 }
 
 void initUsart()
@@ -180,7 +181,7 @@ void initADC()
 	 dma.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
 	 dma.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	 dma.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	 dma.DMA_MemoryBaseAddr = (uint32_t)ADCVal;
+	 dma.DMA_MemoryBaseAddr = (uint32_t)MiCS_6814::getBuffer();
 	 dma.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	 dma.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
 	 dma.DMA_DIR = DMA_DIR_PeripheralSRC;
@@ -199,7 +200,7 @@ void initADC()
 	 ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);
 	 ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);
 	 ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_239Cycles5);
-	 ADC_RegularChannelConfig(ADC1, ADC_Channel_16,4, ADC_SampleTime_239Cycles5);
+	 ADC_RegularChannelConfig(ADC1, ADC_Channel_17,4, ADC_SampleTime_239Cycles5);
 
 	 ADC_DMACmd(ADC1, ENABLE);
 	 ADC_Cmd(ADC1, ENABLE);

@@ -34,8 +34,10 @@ SOFTWARE.
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
 #include "Sensors/HIH6030.h"
+#include "Sensors/MiCS6814.h"
 #include "Display/Display.h"
 #include "math.h"
+#include "string.h"
 
 /* Private macro */
 /* Private variables */
@@ -52,103 +54,118 @@ SOFTWARE.
 */
 
 Display ds;
-char buf[20];
-extern volatile uint16_t ADCVal[4];
-static float V1;
-static float V2;
-static float V3;
-static int V3_d;
-static int V2_d;
-static int V1_d;
-
-void pomiar()
+static TaskMenager tMgr;
+static HIH6030 humSens;
+static MiCS_6814 gasSens;
+static volatile int i = 0;
+void line1()
 {
-	static HIH6030 humSens;
-	static int i = 0;
-	static int cl = 0;
+	ds.clearWindow(18,0,90,12);
+	ds.display_string(0,0,gasSens.get_sensCO(),FONT_1206,colorScale[20]);
+}
+void line2()
+{
+	ds.clearWindow(24,12,90,24);
+	ds.display_string(0,12,gasSens.get_sensNO2(),FONT_1206,colorScale[20]);
+}
+
+void line3()
+{
+	ds.clearWindow(24,24,90,36);
+	ds.display_string(0,24,gasSens.get_sensNH3(),FONT_1206,colorScale[20]);
+}
+
+void line4()
+{
+	ds.clearWindow(42,36,90,48);
+	ds.display_string(0,36,gasSens.get_sensC2H5OH(),FONT_1206,colorScale[20]);
+}
+void line5()
+{
+	ds.clearWindow(30,48,90,60);
+	ds.display_string(0,48,gasSens.get_sensC3H8(),FONT_1206,colorScale[20]);
+}
+
+void measure()
+{
+	printf("%d\n\r",i);
 	switch(i)
 	{
-	case 0: //NO2
+	case 0:
 	{
-		humSens.measureRequest();
-//		V1 = (float)ADCVal[0]*0.0008056640625;
-//		V1 = (3.3-V1)/V1;
-//		V1_d = V1*100;
+		Job jb = line1;
+		tMgr.addJob(jb);
+		i++;
 		break;
 	}
-	case 1://NO3
+	case 1:
 	{
-//		V2 = (float)ADCVal[1]*0.0008056640625;
-//		V2 = (3.3-V2)/V2;
-//		V2_d = V2*100;
-
+		Job jb = line2;
+		tMgr.addJob(jb);
+		i++;
 		break;
 	}
-	case 2://CO
+	case 2:
 	{
-//		V3 = (float)ADCVal[2]*0.0008056640625;
-//		V3 = (3.3-V3)/V3;
-//
-//		V3_d = V3*100;
-//		ds.clearWindow(5,20,70,34);
-//		sprintf(buf,"[%i.%i %c]",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
-//		ds.display_string(5,20,buf,FONT_1206,GREEN);
+		Job jb = line3;
+		tMgr.addJob(jb);
+		i++;
 		break;
 	}
 	case 3:
 	{
-//		ds.clearWindow(5,35,96,48);
-//		sprintf(buf,"%i %i %i",V1_d,V2_d,V3_d);
-//		ds.display_string(5,35,buf,FONT_1206,GREEN);
+		Job jb = line4;
+		tMgr.addJob(jb);
+		tMgr.addJob(line5);
+		i++;
 		break;
 	}
 	case 4:
 	{
-//		float temp = (float)ADCVal[3]*0.8056640625;
-//		ds.clearWindow(5,48,96,63);
-//		sprintf(buf,"%i.%i *C",(int)temp/100,(int)temp%100);
-//		ds.display_string(5,48,buf,FONT_1206,GREEN);
+		Job jb = line5;
+		tMgr.addJob(jb);
+		i++;
 		break;
 	}
+
 	default:
 	{
 
-		i=0;
 		break;
 	}
 	}
-	humSens.getMeasurements();
-	ds.clearWindow(0,0,70,24);
-	MeasureData* hum = humSens.getHumidity();
-	MeasureData* temp = humSens.getTemperature();
-	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
-	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
-	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
-	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
-	char buf[4];
-	sprintf(buf,"%i",-6);
-	ds.display_string(0,24,buf,FONT_1206,colorScale[temp->color]);
-//	ds.setBackground(colorScale[cl]);
-	cl+=1;
-	if(cl >32)
+	if(i>10)
 	{
-		cl = 0;
+		i=0;
 	}
-	++i;
+	gasSens.makeMeasure();
+
+//	humSens.getMeasurements();
+//	MeasureData* hum = humSens.getHumidity();
+//	MeasureData* temp = humSens.getTemperature();
+//	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
+//	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
+//	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
+//	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
 }
 
 extern void (*wsk2)();
 
-
+//Todo
+/*weryfikacja wyliczania stezenia gazow
+ * klasa zarzadzajaca wyswietlaczem - liniami
+ * znalezienie obiektu thread safety dla kolejki jobow*/
 int main(void)
 {
-	wsk2 = pomiar;
+	wsk2 = measure;
 	init();
 	printf("Witaj !\n\r");
 	ds.setBackground(BLACK);
 	while (1)
 	{
-
+		GPIO_SetBits(GPIOC,GPIO_Pin_9);
+		tMgr.run();
+		GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 	}
 }
 

@@ -11,12 +11,6 @@
 #include "Core/SPI2class.h"
 #include "Sensors.h"
 
-template <typename T>
-T abs(T var)
-{
-	return ((var > 0)? var : (-1 * var));
-}
-
 class HIH6030
 {
 private:

@@ -19,16 +19,11 @@ Sensors::~Sensors()
 
 void Sensors::makeMeasure()
 {
-	while(jobQ.size() != 0)
-	{
-		Spi* sp = jobQ.front();
-//		sp->makeMeasure();
-		jobQ.pop();
-	}
+
 }
 
 void Sensors::addJob(Spi* sp)
 {
-	jobQ.push(sp);
+
 }
 
