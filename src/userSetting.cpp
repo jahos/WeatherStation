@@ -7,8 +7,10 @@
 
 #include "stm32f10x_usart.h"
 #include "stm32f10x_gpio.h"
+#include "stm32f1xx_it.h"
 #include "stm32f10x_dma.h"
 #include "stm32f10x_adc.h"
+#include "stm32f10x_tim.h"
 #include "userSettings.h"
 #include "Sensors/MiCS6814.h"
 #define CLK_FREQ 24000000
@@ -18,6 +20,8 @@ volatile uint16_t ADCVal[4];
 void init()
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+	initButtons();
+	initTimer();
 	initUsart();
 	initSPI();
 	initADC();
@@ -213,6 +217,75 @@ void initADC()
 
 	 ADC_TempSensorVrefintCmd(ENABLE);
 	 ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+}
+
+void initButtons()
+{
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitTypeDef inPortConf;
+	inPortConf.GPIO_Pin = GPIO_Pin_8;
+	inPortConf.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOB,&inPortConf);
+
+	inPortConf.GPIO_Pin = GPIO_Pin_9;
+	inPortConf.GPIO_Mode = GPIO_Mode_Out_PP;
+	inPortConf.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB,&inPortConf);
+
+	NVIC_InitTypeDef NVIC_InitStruct;
+	NVIC_InitStruct.NVIC_IRQChannel = EXTI9_5_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource8);
+	EXTI_InitTypeDef extInitStruct;
+	extInitStruct.EXTI_Line = EXTI_Line8;
+	extInitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
+	extInitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
+	extInitStruct.EXTI_LineCmd = ENABLE;
+
+	EXTI_Init(&extInitStruct);
+}
+
+void initTimer()
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+	TIM_TimeBaseInitTypeDef tim1;
+	tim1.TIM_Period = 24000;
+	tim1.TIM_Prescaler = 500;
+	tim1.TIM_ClockDivision = TIM_CKD_DIV4;
+	tim1.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &tim1);
+
+
+	// Konfiguracja kanalu 3
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing; //urz¹dzenie TIM1 bêdzie generowa³o przerwanie w momencie, gdy timer doliczy do wartosci TIM_Pulse
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //Sygna³ z timera bêdzie wykorzystywany do sterowania kontrolerem przerwañ wiêc musi byæ Enable
+	TIM_OCInitStructure.TIM_Pulse = 12000;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //stan wysoki
+	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+	TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_ITConfig(TIM3, TIM_IT_CC3, ENABLE); // w³¹cza przerwanie aktualizacji TIM2
+
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);
+
+	NVIC_InitTypeDef NVIC_InitStruct;
+	NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
+
+	TIM_Cmd(TIM3, ENABLE);
 }
 
 

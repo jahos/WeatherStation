@@ -39,5 +39,7 @@ void init();
 void initUsart();
 void initSPI();
 void initADC();
+void initButtons();
+void initTimer();
 
 #endif /* USERSETTINGS_H_ */

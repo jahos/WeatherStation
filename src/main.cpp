@@ -57,15 +57,15 @@ Display ds;
  TaskMenager tMgr;
 static HIH6030 humSens;
 static MiCS_6814 gasSens;
-static volatile int i = 0;
+
 void line1()
 {
-	ds.clearWindow(18,0,90,12);
+	ds.clearWindow(0,0,90,12);
 	ds.display_string(0,0,gasSens.get_sensCO(),FONT_1206,colorScale[20]);
 }
 void line2()
 {
-	ds.clearWindow(24,12,90,24);
+	ds.clearWindow(0,12,90,24);
 	ds.display_string(0,12,gasSens.get_sensNO2(),FONT_1206,colorScale[20]);
 }
 
@@ -84,12 +84,14 @@ void line5()
 {
 	ds.clearWindow(30,48,90,60);
 	ds.display_string(0,48,gasSens.get_sensC3H8(),FONT_1206,colorScale[20]);
+	printf("jobCount=%d\n\r",tMgr.getJobCount());
 }
 
 void aaa()
 {
 	gasSens.makeMeasure();
-	printf("jobCount=%d\n\r",tMgr.getJobCount());
+	ds.clearWindow(0,0,95,24);
+	printf("port PB8 = %d\n\r",GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_8));
 }
 
 void bbb()
@@ -102,20 +104,30 @@ void bbb()
 	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
 	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
 }
+int i;
 
 void measure()
 {
+
 	GPIO_SetBits(GPIOC,GPIO_Pin_9);
-	tMgr.addJob(aaa);
-	tMgr.addJob(line1);
-	tMgr.addJob(line2);
-	tMgr.addJob(line3);
-	tMgr.addJob(line4);
-	tMgr.addJob(line5);
-	tMgr.addJob(bbb);
+
+	if(i == 3)
+	{
+		tMgr.addJob(line1);
+		tMgr.addJob(line2);
+		tMgr.addJob(line3);
+		tMgr.addJob(line4);
+		tMgr.addJob(line5);
+	}
+	if(i == 6)
+	{
+		tMgr.addJob(aaa);
+		tMgr.addJob(bbb);
+	}
+
+	i = (i>6) ? 0 : (i+1);
+
 	GPIO_ResetBits(GPIOC,GPIO_Pin_9);
-
-
 }
 
 extern void (*wsk2)();

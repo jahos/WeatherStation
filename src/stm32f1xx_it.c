@@ -231,6 +231,24 @@ void USART1_IRQHandler()
     }
 }
 
+void EXTI9_5_IRQHandler()
+{
+	GPIO_SetBits(GPIOC,GPIO_Pin_8);
+	while(1)
+	{
+
+	}
+}
+volatile int i;
+void TIM3_IRQHandler()
+{
+	if (TIM_GetITStatus(TIM3, TIM_IT_CC3) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
+		GPIOB->ODR ^= GPIO_Pin_9;
+	}
+}
+
 extern void SPI1_IRQHandler();
 extern void SPI2_IRQHandler();
 

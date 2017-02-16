@@ -21,7 +21,7 @@ private:
 	Job jobList[TASK_MENAGER_MAX_JOB_COUNT];
 	uint8_t getCapacity();
 public:
-	uint8_t getJobCount() {return begin;}
+	uint8_t getJobCount() {return jobCount;}
 	bool isEmpty();
 	void run();
 	void addJob(Job jb);
