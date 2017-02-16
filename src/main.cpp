@@ -54,7 +54,7 @@ SOFTWARE.
 */
 
 Display ds;
-static TaskMenager tMgr;
+ TaskMenager tMgr;
 static HIH6030 humSens;
 static MiCS_6814 gasSens;
 static volatile int i = 0;
@@ -86,67 +86,36 @@ void line5()
 	ds.display_string(0,48,gasSens.get_sensC3H8(),FONT_1206,colorScale[20]);
 }
 
+void aaa()
+{
+	gasSens.makeMeasure();
+	printf("jobCount=%d\n\r",tMgr.getJobCount());
+}
+
+void bbb()
+{
+	humSens.getMeasurements();
+	MeasureData* hum = humSens.getHumidity();
+	MeasureData* temp = humSens.getTemperature();
+	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
+	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
+	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
+	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
+}
+
 void measure()
 {
-	printf("%d\n\r",i);
-	switch(i)
-	{
-	case 0:
-	{
-		Job jb = line1;
-		tMgr.addJob(jb);
-		i++;
-		break;
-	}
-	case 1:
-	{
-		Job jb = line2;
-		tMgr.addJob(jb);
-		i++;
-		break;
-	}
-	case 2:
-	{
-		Job jb = line3;
-		tMgr.addJob(jb);
-		i++;
-		break;
-	}
-	case 3:
-	{
-		Job jb = line4;
-		tMgr.addJob(jb);
-		tMgr.addJob(line5);
-		i++;
-		break;
-	}
-	case 4:
-	{
-		Job jb = line5;
-		tMgr.addJob(jb);
-		i++;
-		break;
-	}
+	GPIO_SetBits(GPIOC,GPIO_Pin_9);
+	tMgr.addJob(aaa);
+	tMgr.addJob(line1);
+	tMgr.addJob(line2);
+	tMgr.addJob(line3);
+	tMgr.addJob(line4);
+	tMgr.addJob(line5);
+	tMgr.addJob(bbb);
+	GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 
-	default:
-	{
 
-		break;
-	}
-	}
-	if(i>10)
-	{
-		i=0;
-	}
-	gasSens.makeMeasure();
-
-//	humSens.getMeasurements();
-//	MeasureData* hum = humSens.getHumidity();
-//	MeasureData* temp = humSens.getTemperature();
-//	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
-//	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
-//	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
-//	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
 }
 
 extern void (*wsk2)();
@@ -163,9 +132,7 @@ int main(void)
 	ds.setBackground(BLACK);
 	while (1)
 	{
-		GPIO_SetBits(GPIOC,GPIO_Pin_9);
 		tMgr.run();
-		GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 	}
 }
 
