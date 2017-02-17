@@ -35,7 +35,7 @@ SOFTWARE.
 #include "userSettings.h"
 #include "Sensors/HIH6030.h"
 #include "Sensors/MiCS6814.h"
-#include "Display/Display.h"
+
 #include "math.h"
 #include "string.h"
 
@@ -52,46 +52,42 @@ SOFTWARE.
 **
 **===========================================================================
 */
-
-Display ds;
- TaskMenager tMgr;
-static HIH6030 humSens;
-static MiCS_6814 gasSens;
+TaskMenager tMgr;
+HIH6030 humSens;
+MiCS_6814 gasSens;
 
 void line1()
 {
-	ds.clearWindow(0,0,90,12);
-	ds.display_string(0,0,gasSens.get_sensCO(),FONT_1206,colorScale[20]);
+	ds->clearWindow(0,0,90,12);
+	ds->display_string(0,0,gasSens.get_sensCO(),FONT_1206,colorScale[20]);
 }
 void line2()
 {
-	ds.clearWindow(0,12,90,24);
-	ds.display_string(0,12,gasSens.get_sensNO2(),FONT_1206,colorScale[20]);
+	ds->clearWindow(0,12,90,24);
+	ds->display_string(0,12,gasSens.get_sensNO2(),FONT_1206,colorScale[20]);
 }
 
 void line3()
 {
-	ds.clearWindow(24,24,90,36);
-	ds.display_string(0,24,gasSens.get_sensNH3(),FONT_1206,colorScale[20]);
+	ds->clearWindow(24,24,90,36);
+	ds->display_string(0,24,gasSens.get_sensNH3(),FONT_1206,colorScale[20]);
 }
 
 void line4()
 {
-	ds.clearWindow(42,36,90,48);
-	ds.display_string(0,36,gasSens.get_sensC2H5OH(),FONT_1206,colorScale[20]);
+	ds->clearWindow(42,36,90,48);
+	ds->display_string(0,36,gasSens.get_sensC2H5OH(),FONT_1206,colorScale[20]);
 }
 void line5()
 {
-	ds.clearWindow(30,48,90,60);
-	ds.display_string(0,48,gasSens.get_sensC3H8(),FONT_1206,colorScale[20]);
-	printf("jobCount=%d\n\r",tMgr.getJobCount());
+	ds->clearWindow(30,48,90,60);
+	ds->display_string(0,48,gasSens.get_sensC3H8(),FONT_1206,colorScale[20]);
 }
 
 void aaa()
 {
 	gasSens.makeMeasure();
-	ds.clearWindow(0,0,95,24);
-	printf("port PB8 = %d\n\r",GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_8));
+	ds->clearWindow(0,0,95,24);
 }
 
 void bbb()
@@ -99,18 +95,15 @@ void bbb()
 	humSens.getMeasurements();
 	MeasureData* hum = humSens.getHumidity();
 	MeasureData* temp = humSens.getTemperature();
-	ds.display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
-	ds.display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
-	ds.display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
-	ds.display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
+	ds->display_string(40,12,"~C",FONT_1206,colorScale[temp->color]);
+	ds->display_string(40,0,"\%",FONT_1206,colorScale[hum->color]);
+	ds->display_string(0,0,hum->data,FONT_1206,colorScale[hum->color]);
+	ds->display_string(0,12,temp->data,FONT_1206,colorScale[temp->color]);
 }
 int i;
 
 void measure()
 {
-
-	GPIO_SetBits(GPIOC,GPIO_Pin_9);
-
 	if(i == 3)
 	{
 		tMgr.addJob(line1);
@@ -126,11 +119,9 @@ void measure()
 	}
 
 	i = (i>6) ? 0 : (i+1);
-
-	GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 }
 
-extern void (*wsk2)();
+
 
 //Todo
 /*weryfikacja wyliczania stezenia gazow
@@ -141,11 +132,12 @@ int main(void)
 	wsk2 = measure;
 	init();
 	printf("Witaj !\n\r");
-	ds.setBackground(BLACK);
+	ds->setBackground(BLACK);
 	while (1)
 	{
 		tMgr.run();
 	}
+	delete ds;
 }
 
 /*

@@ -231,21 +231,50 @@ void USART1_IRQHandler()
     }
 }
 
+volatile int i;
 void EXTI9_5_IRQHandler()
 {
-	GPIO_SetBits(GPIOC,GPIO_Pin_8);
-	while(1)
+	if(EXTI_GetITStatus(EXTI_Line8))
 	{
-
+		EXTI_ClearFlag(EXTI_Line8);
+		TIM_Cmd(TIM3, ENABLE);
 	}
 }
-volatile int i;
+
+volatile int counter;
+
 void TIM3_IRQHandler()
 {
 	if (TIM_GetITStatus(TIM3, TIM_IT_CC3) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
-		GPIOB->ODR ^= GPIO_Pin_9;
+		TIM_Cmd(TIM3, DISABLE);
+		TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+		TIM_SetCounter(TIM2,0);
+		TIM_Cmd(TIM2,ENABLE);
+	}
+}
+
+void TIM2_IRQHandler()
+{
+	if (TIM_GetITStatus(TIM2, TIM_IT_CC3) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM2, TIM_IT_CC3);
+		if(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_8))
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			TIM_ITConfig(TIM3,TIM_IT_CC3,ENABLE);
+			TIM_SetCounter(TIM3,0);
+			if(counter > 4)
+			{
+				printf("czas:%dms\n\r",counter*5);
+			}
+			counter = 0;
+		}
+		else
+		{
+			counter++;
+		}
 	}
 }
 

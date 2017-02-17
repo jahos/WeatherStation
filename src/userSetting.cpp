@@ -15,7 +15,7 @@
 #include "Sensors/MiCS6814.h"
 #define CLK_FREQ 24000000
 
-volatile uint16_t ADCVal[4];
+Display* ds;
 
 void init()
 {
@@ -25,8 +25,8 @@ void init()
 	initUsart();
 	initSPI();
 	initADC();
-
-	SysTick_Config(13000000);
+	SysTick_Config(12000868); //1s
+	ds = new Display;
 }
 
 void initUsart()
@@ -255,12 +255,12 @@ void initTimer()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM2, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
 	TIM_TimeBaseInitTypeDef tim1;
-	tim1.TIM_Period = 24000;
-	tim1.TIM_Prescaler = 500;
+	tim1.TIM_Period = 73855; //200ms
+	tim1.TIM_Prescaler = 64;
 	tim1.TIM_ClockDivision = TIM_CKD_DIV4;
 	tim1.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3, &tim1);
@@ -268,13 +268,11 @@ void initTimer()
 
 	// Konfiguracja kanalu 3
 	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing; //urz¹dzenie TIM1 bêdzie generowa³o przerwanie w momencie, gdy timer doliczy do wartosci TIM_Pulse
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //Sygna³ z timera bêdzie wykorzystywany do sterowania kontrolerem przerwañ wiêc musi byæ Enable
-	TIM_OCInitStructure.TIM_Pulse = 12000;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //stan wysoki
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OC3Init(TIM3, &TIM_OCInitStructure);
 	TIM_ARRPreloadConfig(TIM3, ENABLE);
-	TIM_ITConfig(TIM3, TIM_IT_CC3, ENABLE); // w³¹cza przerwanie aktualizacji TIM2
+	TIM_ITConfig(TIM3, TIM_IT_CC3, ENABLE);
 
 	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);
 
@@ -284,8 +282,28 @@ void initTimer()
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
+	//---------------------------------------------------------------
+	TIM_TimeBaseInitTypeDef tim2;
+	tim2.TIM_Period = 1846; //5ms
+	tim2.TIM_Prescaler = 64;
+	tim2.TIM_ClockDivision = TIM_CKD_DIV4;
+	tim2.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM2, &tim2);
 
-	TIM_Cmd(TIM3, ENABLE);
+	// Konfiguracja kanalu 3
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OC3Init(TIM2, &TIM_OCInitStructure);
+	TIM_ARRPreloadConfig(TIM2, ENABLE);
+	TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
+
+	TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Disable);
+
+	NVIC_InitStruct.NVIC_IRQChannel = TIM2_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 3;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
 }
 
 

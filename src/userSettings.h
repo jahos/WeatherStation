@@ -8,7 +8,7 @@
 #ifndef USERSETTINGS_H_
 #define USERSETTINGS_H_
 #include "Core/TaskMenager.h"
-
+#include "Display/Display.h"
 #define USART1_TX 	GPIO_Pin_9
 #define USART1_RX 	GPIO_Pin_10
 
@@ -33,7 +33,8 @@
 #define SPI2_MISO_PIN 		GPIO_Pin_14
 
 #define ADC_CHANNELS 4
-extern volatile uint16_t ADCVal[4];
+extern Display* ds;
+extern void (*wsk2)();
 
 void init();
 void initUsart();
