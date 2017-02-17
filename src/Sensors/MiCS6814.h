@@ -10,7 +10,8 @@
 #include <stdint.h>
 #include "Sensors.h"
 
-class MiCS_6814 {
+class MiCS_6814 : public Sensors
+{
 private:
 	static uint16_t adcVal[4];
 	float sensorCO;
@@ -33,7 +34,8 @@ private:
 	void convertVal(float val, const char* pref);
 public:
 	static uint16_t* getBuffer();
-	void makeMeasure();
+	void drawMe();
+	void sendMeasureReq();
 	int getRefVal();
 	char* get_sensCO();
 	char* get_sensNO2();

@@ -6,6 +6,7 @@
  */
 
 #include <Sensors/MiCS6814.h>
+#include "userSettings.h"
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -114,7 +115,7 @@ float MiCS_6814::getRS(uint16_t adcValue)
 	return retVal;
 }
 
-void MiCS_6814::makeMeasure()
+void MiCS_6814::sendMeasureReq()
 {
 	float ratio0, ratio1, ratio2;
 
@@ -136,3 +137,11 @@ void MiCS_6814::makeMeasure()
 	sensorC2H5OH = pow(ratio1, -1.552)*1.622;
 }
 
+void MiCS_6814::drawMe()
+{
+	ds->display_string(0,0,get_sensCO(),FONT_1206,colorScale[20]);
+	ds->display_string(0,12,get_sensNO2(),FONT_1206,colorScale[20]);
+	ds->display_string(0,24,get_sensNH3(),FONT_1206,colorScale[20]);
+	ds->display_string(0,36,get_sensC2H5OH(),FONT_1206,colorScale[20]);
+	ds->display_string(0,48,get_sensC3H8(),FONT_1206,colorScale[20]);
+}

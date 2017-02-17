@@ -11,7 +11,7 @@
 #include "Core/SPI2class.h"
 #include "Sensors.h"
 
-class HIH6030
+class HIH6030 : public Sensors
 {
 private:
 	float m_temperature;
@@ -22,14 +22,16 @@ private:
 	SPI2_class * m_sp;
 	char m_hum[10];
 	char m_temp[10];
+	char stringBuf[10];
 	MeasureData temp;
 	MeasureData hum;
 
 	void updatedColors();
 	void updateBuffers();
 public:
-	void measureRequest();
-	void getMeasurements();
+	void drawMe();
+	void sendMeasureReq();
+	void collectData();
 	MeasureData* getTemperature();
 	MeasureData* getHumidity();
 	HIH6030();

@@ -9,7 +9,7 @@
 #include "userSettings.h"
 #include <stdio.h>
 
-extern const uint16_t colorScale[32] =
+const uint16_t colorScale[32] =
 {
 		RGB_MACRO( 0, 0, 255)	,RGB_MACRO( 0, 16, 240)	,RGB_MACRO( 0, 32, 224),
 		RGB_MACRO( 0, 48, 208)	,RGB_MACRO( 0, 64, 192)	,RGB_MACRO( 0, 80, 176),

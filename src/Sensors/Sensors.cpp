@@ -7,23 +7,5 @@
 
 #include <Sensors/Sensors.h>
 
-Sensors::Sensors()
-{
 
-}
-
-Sensors::~Sensors()
-{
-
-}
-
-void Sensors::makeMeasure()
-{
-
-}
-
-void Sensors::addJob(Spi* sp)
-{
-
-}
 

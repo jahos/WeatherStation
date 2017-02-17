@@ -9,6 +9,8 @@
 #define USERSETTINGS_H_
 #include "Core/TaskMenager.h"
 #include "Display/Display.h"
+#include "Sensors/HIH6030.h"
+#include "Sensors/MiCS6814.h"
 #define USART1_TX 	GPIO_Pin_9
 #define USART1_RX 	GPIO_Pin_10
 
@@ -33,7 +35,10 @@
 #define SPI2_MISO_PIN 		GPIO_Pin_14
 
 #define ADC_CHANNELS 4
+extern const uint16_t colorScale[32];
 extern Display* ds;
+extern HIH6030* humSens;
+extern MiCS_6814* gasSens;
 extern void (*wsk2)();
 
 void init();

@@ -77,8 +77,6 @@ enum Color{
     PURPLE    = RGB_MACRO(160, 32,240), // purple
 };
 
-extern const uint16_t colorScale[32];
-
 enum DisplayMode{
     //reset the above effect and turn the data to ON at the corresponding gray level.
     DisplayNormal   = 0xA4,

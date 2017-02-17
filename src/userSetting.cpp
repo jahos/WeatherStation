@@ -16,7 +16,8 @@
 #define CLK_FREQ 24000000
 
 Display* ds;
-
+HIH6030* humSens;
+MiCS_6814* gasSens;
 void init()
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -26,7 +27,9 @@ void init()
 	initSPI();
 	initADC();
 	SysTick_Config(12000868); //1s
-	ds = new Display;
+	ds 		= new Display;
+	humSens = new HIH6030;
+	gasSens = new MiCS_6814;
 }
 
 void initUsart()
@@ -258,15 +261,15 @@ void initTimer()
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM2, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
+	//TIM3 responsible for bouncing compensation
 	TIM_TimeBaseInitTypeDef tim1;
-	tim1.TIM_Period = 73855; //200ms
+	tim1.TIM_Period = 36928; //100ms
 	tim1.TIM_Prescaler = 64;
 	tim1.TIM_ClockDivision = TIM_CKD_DIV4;
 	tim1.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3, &tim1);
 
-
-	// Konfiguracja kanalu 3
+	// Config of channel 3
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
@@ -283,6 +286,7 @@ void initTimer()
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
 	//---------------------------------------------------------------
+	//TIM2 Measure time length of push button
 	TIM_TimeBaseInitTypeDef tim2;
 	tim2.TIM_Period = 1846; //5ms
 	tim2.TIM_Prescaler = 64;
@@ -290,7 +294,7 @@ void initTimer()
 	tim2.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM2, &tim2);
 
-	// Konfiguracja kanalu 3
+	// Config of channel 3
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OC3Init(TIM2, &TIM_OCInitStructure);

@@ -6,6 +6,7 @@
  */
 
 #include <Sensors/HIH6030.h>
+#include <userSettings.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -41,7 +42,7 @@ MeasureData* HIH6030::getHumidity()
 	return &hum;
 }
 
-void HIH6030::measureRequest()
+void HIH6030::sendMeasureReq()
 {
 	if(m_sp->isBusy() ==  false)
 	{
@@ -100,7 +101,7 @@ void HIH6030::updateBuffers()
 	}
 }
 
-void HIH6030::getMeasurements()
+void HIH6030::collectData()
 {
 	if(m_sp->isBusy() ==  false)
 	{
@@ -132,3 +133,11 @@ void HIH6030::getMeasurements()
 	updateBuffers();
 }
 
+void HIH6030::drawMe()
+{
+	humSens->collectData();
+	ds->display_string(30,12,"~C",FONT_1206,colorScale[temp.color]);
+	ds->display_string(30,0,"\%",FONT_1206,colorScale[hum.color]);
+	ds->display_string(0,0,hum.data,FONT_1206,colorScale[hum.color]);
+	ds->display_string(0,12,temp.data,FONT_1206,colorScale[temp.color]);
+}

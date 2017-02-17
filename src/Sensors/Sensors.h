@@ -23,15 +23,21 @@ struct MeasureData
 	char * data;
 };
 
+typedef enum SensorsE
+{
+	HIH6030e  = 0,
+	MiCS6814e = 1,
+	BMP280e	 = 2
+}SensorsE;
+
 class Sensors
 {
 private:
-	std::queue<Spi*> jobQ;
+
 public:
-	void addJob(Spi* sp);
-	void makeMeasure();
-	Sensors();
-	~Sensors();
+	virtual void drawMe() = 0;
+	virtual void sendMeasureReq() = 0;
+	virtual ~Sensors() {}
 };
 
 #endif /* SENSORS_SENSORS_H_ */

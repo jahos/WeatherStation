@@ -278,8 +278,7 @@ void TIM2_IRQHandler()
 	}
 }
 
-extern void SPI1_IRQHandler();
-extern void SPI2_IRQHandler();
+
 
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
