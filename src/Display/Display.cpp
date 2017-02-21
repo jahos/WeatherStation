@@ -380,9 +380,17 @@ void Display::display_string(uint8_t chXpos, uint8_t chYpos, const char *pchStri
 			chYpos += chSize;
 			if (chYpos > (RGB_OLED_HEIGHT - chSize)) {
 				chYpos = chXpos = 0;
-//				clearWindow(0,0,0,0);
 			}
 		}
+        if(*pchString == '\n')
+        {
+        	pchString++;
+			chXpos = 0;
+			chYpos += chSize;
+			if (chYpos > (RGB_OLED_HEIGHT - chSize)) {
+				chYpos = chXpos = 0;
+			}
+        }
 
         display_char(chXpos, chYpos, *pchString, chSize, hwColor);
         chXpos += chSize / 2;

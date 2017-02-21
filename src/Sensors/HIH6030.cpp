@@ -7,6 +7,7 @@
 
 #include <Sensors/HIH6030.h>
 #include <userSettings.h>
+#include "common.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -14,6 +15,7 @@ HIH6030::HIH6030():
 	 m_temperature(0)
 	,m_humidity(0)
 	,m_sp(&SPI2_class::getInstance())
+	,cleanFlag(false)
 {
 	memset(m_hum,'\0',10);
 	memset(m_temp,'\0',10);
@@ -85,19 +87,19 @@ void HIH6030::updateBuffers()
 
 	if(temp_m < 10)
 	{
-		sprintf(m_temp,"%i.0%i",(int)m_temperature,temp_m);
+		sprintf(m_temp,"%i.0%i~C",(int)m_temperature,temp_m);
 	}
 	else
 	{
-		sprintf(m_temp,"%i.%i",(int)m_temperature,temp_m);
+		sprintf(m_temp,"%i.%i~C",(int)m_temperature,temp_m);
 	}
 	if(hum_m < 10)
 	{
-		sprintf(m_hum,"%i.0%i",(int)m_humidity,hum_m);
+		sprintf(m_hum,"%i.0%i%c",(int)m_humidity,hum_m,'%');
 	}
 	else
 	{
-		sprintf(m_hum,"%i.%i",(int)m_humidity,hum_m);
+		sprintf(m_hum,"%i.%i%c",(int)m_humidity,hum_m,'%');
 	}
 }
 
@@ -135,9 +137,22 @@ void HIH6030::collectData()
 
 void HIH6030::drawMe()
 {
-	humSens->collectData();
-	display->display_string(30,12,"~C",FONT_1206,colorScale[temp.color]);
-	display->display_string(30,0,"\%",FONT_1206,colorScale[hum.color]);
-	display->display_string(0,0,hum.data,FONT_1206,colorScale[hum.color]);
-	display->display_string(0,12,temp.data,FONT_1206,colorScale[temp.color]);
+	if( cleanFlag)
+	{
+		memset(m_cleanBuf,'\0',10);
+		humSens->collectData();
+		cpyAndSetCleanBuf(m_hum, m_lastHum, m_cleanBuf, 10);
+		display->display_string(0, 0, m_cleanBuf, FONT_1206, BLACK);
+		display->display_string(0, 0, m_hum, FONT_1206, colorScale[hum.color]);
+
+		cpyAndSetCleanBuf(m_temp, m_lastTemp, m_cleanBuf, 10);
+		display->display_string(0, 12, m_cleanBuf, FONT_1206, BLACK);
+		display->display_string(0, 12, m_temp, FONT_1206, colorScale[temp.color]);
+	}
+	else
+	{
+		display->display_string(0, 0, m_hum, FONT_1206, colorScale[hum.color]);
+		display->display_string(0, 12, m_temp, FONT_1206, colorScale[temp.color]);
+		cleanFlag = true;
+	}
 }

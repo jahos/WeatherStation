@@ -39,8 +39,8 @@ extern const uint16_t colorScale[32];
 extern Display* display;
 extern HIH6030* humSens;
 extern MiCS_6814* gasSensor;
-extern void (*wsk2)();
-extern void (*setSensor)(int i);
+extern void (*addJobFunPtr)();
+extern void (*setSensorFunPtr)(int i);
 
 void init();
 void initUsart();
@@ -48,5 +48,6 @@ void initSPI();
 void initADC();
 void initButtons();
 void initTimer();
+
 
 #endif /* USERSETTINGS_H_ */

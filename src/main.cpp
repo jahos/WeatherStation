@@ -33,11 +33,7 @@ SOFTWARE.
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
-#include "Sensors/HIH6030.h"
-#include "Sensors/MiCS6814.h"
 #include "Display/DisplayMenager.h"
-#include "math.h"
-#include "string.h"
 
 /* Private macro */
 /* Private variables */
@@ -56,6 +52,7 @@ TaskMenager taskMenager;
 DisplayMenager displayMenager;
 void showSensor(int sensor)
 {
+	display->clear();
 	displayMenager.setSensor(static_cast<SensorsE>(sensor));
 }
 
@@ -69,11 +66,9 @@ void sendMeasureReq()
 	gasSensor->sendMeasureReq();
 }
 
-int i;
-
 void measure()
 {
-	display->clear();
+//	display->clear();
 	taskMenager.addJob(draw);
 	taskMenager.addJob(sendMeasureReq);
 }
@@ -86,8 +81,8 @@ void measure()
  * znalezienie obiektu thread safety dla kolejki jobow*/
 int main(void)
 {
-	wsk2 = measure;
-	setSensor = showSensor;
+	addJobFunPtr = measure;
+	setSensorFunPtr = showSensor;
 	init();
 	printf("Witaj !\n\r");
 	display->setBackground(BLACK);

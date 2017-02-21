@@ -22,13 +22,15 @@ private:
 	SPI2_class * m_sp;
 	char m_hum[10];
 	char m_temp[10];
-	char stringBuf[10];
+	char m_lastHum[10];
+	char m_lastTemp[10];
+	char m_cleanBuf[10];
 	MeasureData temp;
 	MeasureData hum;
-
 	void updatedColors();
 	void updateBuffers();
 public:
+	bool cleanFlag;
 	void drawMe();
 	void sendMeasureReq();
 	void collectData();

@@ -21,6 +21,7 @@ DisplayMenager::~DisplayMenager()
 
 void DisplayMenager::setSensor(SensorsE sensor)
 {
+	humSens->cleanFlag = false;
 	currentDispSens = sensor;
 }
 
@@ -34,7 +35,6 @@ void DisplayMenager::showMeasurements(Sensors* sensor)
 
 void DisplayMenager::draw()
 {
-	printf("currentDispSens:%d\n\r",currentDispSens);
 	switch(currentDispSens)
 	{
 	case HIH6030e:
@@ -52,7 +52,9 @@ void DisplayMenager::draw()
 		break;
 	}
 	default:
+	{
 		display->display_string(0,12,"Not found!",FONT_1206,RED);
 		break;
+	}
 	}
 }

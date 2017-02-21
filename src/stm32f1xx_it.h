@@ -59,8 +59,6 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void EXTI15_10_IRQHandler(void);
 void USART1_IRQHandler();
-//void SPI1_IRQHandler();
-//void SPI2_IRQHandler();
 
 extern void SPI1_IRQHandler();
 extern void SPI2_IRQHandler();

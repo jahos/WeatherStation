@@ -51,8 +51,8 @@
 static BufferS_t outBuffer;
 static BufferS_t inBuffer;
 
-void (*wsk2)();
-void (*setSensor)(int i);
+void (*addJobFunPtr)();
+void (*setSensorFunPtr)(int i);
 
 /******************************************************************************/
 /*            Cortex-M Processor Exceptions Handlers                          */
@@ -190,7 +190,7 @@ int _write(int fd, char *str, int len)
 
 void SysTick_Handler(void)
 {
-	wsk2();
+	addJobFunPtr();
 }
 
 void USART1_IRQHandler()
@@ -268,17 +268,15 @@ void TIM2_IRQHandler()
 			TIM_SetCounter(TIM3,0);
 			if((counter > 2) && (counter <=55))
 			{
-				setSensor(MiCS6814e);
-				printf("czas:%dms\n\r",counter*5);
+				setSensorFunPtr(MiCS6814e);
 			}
 			else if((counter > 55) && (counter < 200))
 			{
-				setSensor(HIH6030e);
-				printf("czas:%dms\n\r",counter*5);
+				setSensorFunPtr(HIH6030e);
 			}
 			else
 			{
-				printf("czas:%dms\n\r",counter*5);
+//				printf("czas:%dms\n\r",counter*5);
 			}
 			counter = 0;
 		}
