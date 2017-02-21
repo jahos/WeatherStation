@@ -52,17 +52,17 @@ SOFTWARE.
 **
 **===========================================================================
 */
-TaskMenager tMgr;
-DisplayMenager dispMgr;
+TaskMenager taskMenager;
+DisplayMenager displayMenager;
 void line1()
 {
-	dispMgr.draw();
+	displayMenager.draw();
 }
 
 void aaa()
 {
-	gasSens->sendMeasureReq();
-	ds->clearWindow(0,0,95,24);
+	gasSensor->sendMeasureReq();
+	display->clearWindow(0,0,95,24);
 }
 
 void bbb()
@@ -75,21 +75,21 @@ void measure()
 {
 	if(i == 2)
 	{
-		ds->clear();
+		display->clear();
 	}
 	if(i == 3)
 	{
-		tMgr.addJob(line1);
+		taskMenager.addJob(line1);
 
 	}
 	if(i == 7)
 	{
-		ds->clear();
+		display->clear();
 	}
 	if(i == 8)
 	{
-		tMgr.addJob(aaa);
-		tMgr.addJob(bbb);
+		taskMenager.addJob(aaa);
+		taskMenager.addJob(bbb);
 	}
 
 	i = (i>8) ? 0 : (i+1);
@@ -106,14 +106,11 @@ int main(void)
 	wsk2 = measure;
 	init();
 	printf("Witaj !\n\r");
-	ds->setBackground(BLACK);
+	display->setBackground(BLACK);
 	while (1)
 	{
-		tMgr.run();
+		taskMenager.run();
 	}
-	delete ds;
-	delete humSens;
-	delete gasSens;
 }
 
 /*

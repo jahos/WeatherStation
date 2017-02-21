@@ -231,7 +231,6 @@ void USART1_IRQHandler()
     }
 }
 
-volatile int i;
 void EXTI9_5_IRQHandler()
 {
 	if(EXTI_GetITStatus(EXTI_Line8))
@@ -241,7 +240,7 @@ void EXTI9_5_IRQHandler()
 	}
 }
 
-volatile int counter;
+
 
 void TIM3_IRQHandler()
 {
@@ -257,6 +256,7 @@ void TIM3_IRQHandler()
 
 void TIM2_IRQHandler()
 {
+	static int counter = 0;
 	if (TIM_GetITStatus(TIM2, TIM_IT_CC3) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC3);

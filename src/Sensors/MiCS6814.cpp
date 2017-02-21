@@ -139,9 +139,9 @@ void MiCS_6814::sendMeasureReq()
 
 void MiCS_6814::drawMe()
 {
-	ds->display_string(0,0,get_sensCO(),FONT_1206,colorScale[20]);
-	ds->display_string(0,12,get_sensNO2(),FONT_1206,colorScale[20]);
-	ds->display_string(0,24,get_sensNH3(),FONT_1206,colorScale[20]);
-	ds->display_string(0,36,get_sensC2H5OH(),FONT_1206,colorScale[20]);
-	ds->display_string(0,48,get_sensC3H8(),FONT_1206,colorScale[20]);
+	display->display_string(0,0,get_sensCO(),FONT_1206,colorScale[20]);
+	display->display_string(0,12,get_sensNO2(),FONT_1206,colorScale[20]);
+	display->display_string(0,24,get_sensNH3(),FONT_1206,colorScale[20]);
+	display->display_string(0,36,get_sensC2H5OH(),FONT_1206,colorScale[20]);
+	display->display_string(0,48,get_sensC3H8(),FONT_1206,colorScale[20]);
 }

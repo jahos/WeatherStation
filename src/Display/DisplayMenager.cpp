@@ -50,7 +50,7 @@ void DisplayMenager::draw()
 		break;
 	}
 	default:
-		ds->display_string(0,12,"Not found!",FONT_1206,RED);
+		display->display_string(0,12,"Not found!",FONT_1206,RED);
 		break;
 	}
 }

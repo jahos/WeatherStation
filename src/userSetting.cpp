@@ -15,9 +15,9 @@
 #include "Sensors/MiCS6814.h"
 #define CLK_FREQ 24000000
 
-Display* ds;
+Display* display;
 HIH6030* humSens;
-MiCS_6814* gasSens;
+MiCS_6814* gasSensor;
 void init()
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -27,9 +27,9 @@ void init()
 	initSPI();
 	initADC();
 	SysTick_Config(12000868); //1s
-	ds 		= new Display;
+	display 		= new Display;
 	humSens = new HIH6030;
-	gasSens = new MiCS_6814;
+	gasSensor = new MiCS_6814;
 }
 
 void initUsart()

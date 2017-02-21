@@ -136,8 +136,8 @@ void HIH6030::collectData()
 void HIH6030::drawMe()
 {
 	humSens->collectData();
-	ds->display_string(30,12,"~C",FONT_1206,colorScale[temp.color]);
-	ds->display_string(30,0,"\%",FONT_1206,colorScale[hum.color]);
-	ds->display_string(0,0,hum.data,FONT_1206,colorScale[hum.color]);
-	ds->display_string(0,12,temp.data,FONT_1206,colorScale[temp.color]);
+	display->display_string(30,12,"~C",FONT_1206,colorScale[temp.color]);
+	display->display_string(30,0,"\%",FONT_1206,colorScale[hum.color]);
+	display->display_string(0,0,hum.data,FONT_1206,colorScale[hum.color]);
+	display->display_string(0,12,temp.data,FONT_1206,colorScale[temp.color]);
 }

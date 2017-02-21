@@ -36,9 +36,9 @@
 
 #define ADC_CHANNELS 4
 extern const uint16_t colorScale[32];
-extern Display* ds;
+extern Display* display;
 extern HIH6030* humSens;
-extern MiCS_6814* gasSens;
+extern MiCS_6814* gasSensor;
 extern void (*wsk2)();
 
 void init();
