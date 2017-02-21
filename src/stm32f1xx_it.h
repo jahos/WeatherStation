@@ -29,8 +29,6 @@
 #ifndef __STM32F1XX_IT_H
 #define __STM32F1XX_IT_H
 
-#define ENTER 				13
-
 #ifdef __cplusplus
  extern "C" {
 #endif 
@@ -39,8 +37,15 @@
 
 
 /* Exported types ------------------------------------------------------------*/
+ typedef enum SensorsE
+ {
+ 	HIH6030e  = 0,
+ 	MiCS6814e = 1,
+ 	BMP280e	 = 2
+ }SensorsE;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+#define ENTER 				13
 /* Exported functions ------------------------------------------------------- */
  /* Local Var --------------------------------------------------------------- */
 void NMI_Handler(void);

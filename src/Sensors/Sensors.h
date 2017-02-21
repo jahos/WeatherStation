@@ -23,12 +23,12 @@ struct MeasureData
 	char * data;
 };
 
-typedef enum SensorsE
-{
-	HIH6030e  = 0,
-	MiCS6814e = 1,
-	BMP280e	 = 2
-}SensorsE;
+//typedef enum SensorsE
+//{
+//	HIH6030e  = 0,
+//	MiCS6814e = 1,
+//	BMP280e	 = 2
+//}SensorsE;
 
 class Sensors
 {

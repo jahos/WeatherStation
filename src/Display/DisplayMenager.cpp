@@ -6,6 +6,7 @@
  */
 
 #include <Display/DisplayMenager.h>
+#include <stdio.h>
 
 DisplayMenager::DisplayMenager() : currentDispSens(HIH6030e)
 {
@@ -33,6 +34,7 @@ void DisplayMenager::showMeasurements(Sensors* sensor)
 
 void DisplayMenager::draw()
 {
+	printf("currentDispSens:%d\n\r",currentDispSens);
 	switch(currentDispSens)
 	{
 	case HIH6030e:
@@ -42,7 +44,7 @@ void DisplayMenager::draw()
 	}
 	case MiCS6814e:
 	{
-//		showMeasurements(gasSens);
+		showMeasurements(gasSensor);
 		break;
 	}
 	case BMP280e:

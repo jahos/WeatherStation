@@ -40,6 +40,7 @@ extern Display* display;
 extern HIH6030* humSens;
 extern MiCS_6814* gasSensor;
 extern void (*wsk2)();
+extern void (*setSensor)(int i);
 
 void init();
 void initUsart();

@@ -52,6 +52,7 @@ static BufferS_t outBuffer;
 static BufferS_t inBuffer;
 
 void (*wsk2)();
+void (*setSensor)(int i);
 
 /******************************************************************************/
 /*            Cortex-M Processor Exceptions Handlers                          */
@@ -265,7 +266,17 @@ void TIM2_IRQHandler()
 			TIM_Cmd(TIM2,DISABLE);
 			TIM_ITConfig(TIM3,TIM_IT_CC3,ENABLE);
 			TIM_SetCounter(TIM3,0);
-			if(counter > 4)
+			if((counter > 2) && (counter <=55))
+			{
+				setSensor(MiCS6814e);
+				printf("czas:%dms\n\r",counter*5);
+			}
+			else if((counter > 55) && (counter < 200))
+			{
+				setSensor(HIH6030e);
+				printf("czas:%dms\n\r",counter*5);
+			}
+			else
 			{
 				printf("czas:%dms\n\r",counter*5);
 			}

@@ -54,45 +54,28 @@ SOFTWARE.
 */
 TaskMenager taskMenager;
 DisplayMenager displayMenager;
-void line1()
+void showSensor(int sensor)
+{
+	displayMenager.setSensor(static_cast<SensorsE>(sensor));
+}
+
+void draw()
 {
 	displayMenager.draw();
 }
 
-void aaa()
+void sendMeasureReq()
 {
 	gasSensor->sendMeasureReq();
-	display->clearWindow(0,0,95,24);
 }
 
-void bbb()
-{
-
-}
 int i;
 
 void measure()
 {
-	if(i == 2)
-	{
-		display->clear();
-	}
-	if(i == 3)
-	{
-		taskMenager.addJob(line1);
-
-	}
-	if(i == 7)
-	{
-		display->clear();
-	}
-	if(i == 8)
-	{
-		taskMenager.addJob(aaa);
-		taskMenager.addJob(bbb);
-	}
-
-	i = (i>8) ? 0 : (i+1);
+	display->clear();
+	taskMenager.addJob(draw);
+	taskMenager.addJob(sendMeasureReq);
 }
 
 
@@ -104,6 +87,7 @@ void measure()
 int main(void)
 {
 	wsk2 = measure;
+	setSensor = showSensor;
 	init();
 	printf("Witaj !\n\r");
 	display->setBackground(BLACK);
